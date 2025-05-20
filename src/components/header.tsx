@@ -2,9 +2,9 @@ import { FaBars } from "react-icons/fa6";
 
 export default function Header() {
   return (
-    <header className="flex items-center border-b border-gray-200 shadow-md">
-      <FaBars className="text-2xl m-2 text-indigo-700 " />
-      <h1 className="text-2xl text-indigo-800 font-bold justify-center flex-1 scale-x-80 border-b border-rose-400 tracking-tighter">
+    <header className="flex items-center border-b border-gray-200 shadow-md bg-neutral-900">
+      <FaBars className="text-3xl p-1 text-yellow-700 bg-neutral-800" />
+      <h1 className="font-logo text-2xl ml-3 text-yellow-700">
         GenTools
       </h1>
     </header>
