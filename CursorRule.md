@@ -270,3 +270,103 @@ interface TierDefinition {
 - 誤操作の大幅減少
 - モバイル環境での使いやすさ改善
 - 設定項目へのアクセシビリティ向上
+
+# Cursor開発ルール
+
+## 開発メモ
+
+### 2024年12月19日：Tiermaker ドラッグ&ドロップ実装
+
+#### 問題
+- @dnd-kitのHydrationエラーが発生
+- スマホでのドラッグ操作が不安定
+- Character選択欄のスクロールとドラッグが競合
+
+#### 解決アプローチ
+1. **Hydration問題**: 動的インポート（Dynamic Import）でSSR無効化
+2. **Z-index問題**: DragOverlayで最前面表示
+3. **スマホ操作**: TouchSensor + MouseSensor + PointerSensorの組み合わせ
+4. **スクロール競合**: touchAction設定とセンサーの調整
+
+#### 現在の設定
+```typescript
+// 複数センサーで確実にドラッグ検知
+const sensors = useSensors(
+  useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+  useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
+  useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+);
+```
+
+#### 今後の課題
+- スマホでのスクロールとドラッグの完全な分離
+- タッチ操作の反応性向上
+
+## プロジェクト構成
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- @dnd-kit（ドラッグ&ドロップ）
+
+## 気づき・メモ
+- 動的インポートはHydration問題の有効な解決策
+- タッチデバイスでのドラッグ操作は複数センサーの組み合わせが重要
+
+## 2024年 - Tiermaker ドラッグ＆ドロップ問題の解決
+
+### 問題の経緯
+- モバイルで横スクロールコンテナ内のドラッグ＆ドロップが動作しない
+- iOS/Androidで タッチ操作とスクロール操作が競合
+
+### 解決策: tiermaker.com方式の採用（スクロールとドラッグの物理的分離）
+
+#### 実装した仕組み
+1. **上段（横スワイプ検知エリア）**
+   - 非ドラッグ領域での横スワイプ検知
+   - "ここをタッチしてスワイプ"表示
+   - マウス・タッチイベントで下段のスクロールを制御
+
+2. **中段（ドラッグ可能キャラクターエリア）**
+   - 選択済みキャラクターのドラッグ可能表示
+   - スクロール機能なし、ドラッグのみに特化
+   - 上段・下段と物理的に分離
+
+3. **下段（キャラクター横スクロールリスト）**
+   - 全キャラクターの横スクロール一覧
+   - クリック選択のみ（ドラッグ無効）
+   - 上段のスワイプ操作と連動してスクロール
+
+#### 技術実装の詳細
+
+**スワイプ連動システム**
+```typescript
+const handleSwipeMove = (e: React.TouchEvent | React.MouseEvent) => {
+  if (!isSwipping || !scrollRef.current) return;
+  const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+  const walk = (startX - clientX) * 2; // スクロール速度調整
+  scrollRef.current.scrollLeft = scrollLeft + walk;
+};
+```
+
+**エリア分離設計**
+- 上段: `touchAction: 'none'` でスワイプ検知専用
+- 中段: ドラッグ専用エリア（スクロール無効）
+- 下段: 横スクロール専用（ドラッグ無効）
+
+#### メリット
+1. **完全な競合回避**: スクロールエリアとドラッグエリアが物理的に分離
+2. **直感的操作**: 上でスワイプ→下がスクロールの明確な関係
+3. **モバイル最適化**: タッチ操作に最適化された3段構造
+4. **確実性**: どの操作がどの結果をもたらすかが明確
+
+#### 今回の学び
+- モバイルでのドラッグ＆ドロップは横スクロールと相性が悪い
+- 既存サービス（tiermaker.com）のUXパターンを参考にするのが有効
+- **機能の物理的分離**（ドラッグ vs スクロール）が根本的解決につながる
+- @dnd-kitでも物理的な制約（スクロールコンテナ）は解決できない
+- **スワイプ連動システム**でUXを損なわずに競合を回避可能
+
+### 次の改善予定
+- 画像として保存機能（html2canvas使用予定）
+- ティア行の並び替え機能
+- キーボードショートカット対応
