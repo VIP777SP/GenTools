@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-
+import Footer from '@/components/footer';
 // TierMakerClientを動的インポート（SSR無効）
 const TierMakerClient = dynamic(() => import('./components/TierMakerClient'), {
   ssr: false,
@@ -45,5 +45,10 @@ export default function TierMakerPage() {
     );
   }
 
-  return <TierMakerClient />;
+  return (
+    <div>
+      <TierMakerClient />
+      <Footer />
+    </div>
+  );
 }

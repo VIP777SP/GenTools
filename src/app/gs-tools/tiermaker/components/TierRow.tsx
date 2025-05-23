@@ -68,7 +68,7 @@ export function TierRow({
         {/* 設定ボタン */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className={`absolute top-1 left-1 w-5 h-5 ${getLighterBgColor(tier.color).normal} rounded text-xs hover:${getLighterBgColor(tier.color).hover} transition-all flex items-center justify-center`}
+          className={`absolute top-1 left-1 w-5 h-5 ${getLighterBgColor(tier.color).normal} rounded text-xs hover:${getLighterBgColor(tier.color).hover} transition-all flex items-center justify-center text-white`}
           title="設定"
         >
           ⋯
@@ -84,7 +84,7 @@ export function TierRow({
             />
             
             {/* 設定パネル */}
-            <div className="absolute top-full left-0 z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
+            <div className="absolute top-1 left-1 z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
               <h4 className="text-gray-800 font-bold mb-3 text-sm">Tier設定</h4>
               
               {/* ラベル編集 */}

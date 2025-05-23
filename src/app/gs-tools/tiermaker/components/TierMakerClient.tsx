@@ -18,11 +18,11 @@ import { charlist, character } from '@/libs/charlist';
 
 // ティア定義
 const tierDefinitions = [
-  { id: 'S', label: 'S級', color: 'bg-red-500', textColor: 'text-white' },
-  { id: 'A', label: 'A級', color: 'bg-orange-500', textColor: 'text-white' },
-  { id: 'B', label: 'B級', color: 'bg-yellow-500', textColor: 'text-white' },
-  { id: 'C', label: 'C級', color: 'bg-green-500', textColor: 'text-white' },
-  { id: 'D', label: 'D級', color: 'bg-blue-500', textColor: 'text-white' },
+  { id: 'S', label: 'S', color: 'bg-red-500', textColor: 'text-white' },
+  { id: 'A', label: 'A', color: 'bg-orange-500', textColor: 'text-white' },
+  { id: 'B', label: 'B', color: 'bg-yellow-500', textColor: 'text-white' },
+  { id: 'C', label: 'C', color: 'bg-green-500', textColor: 'text-white' },
+  { id: 'D', label: 'D', color: 'bg-blue-500', textColor: 'text-white' },
 ];
 
 export interface TierDefinition {
