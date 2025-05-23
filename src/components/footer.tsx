@@ -1,21 +1,21 @@
-import { FaHome, FaArticle, FaTool, FaLink } from "react-icons/fa";
+import { FaHouse, FaNewspaper, FaScrewdriverWrench, FaLink } from "react-icons/fa6";
 
 export default function Footer() {
   const MenuList = [
     {
             name: "ホーム",
             href: "/",
-            icon:<FaHome />
+            icon:<FaHouse />
         },
         {
             name: "記事",
             href: "/gs-articles",
-            icon:<FaHome />
+            icon:<FaNewspaper />
         },
         {
             name: "ツール集",
             href: "/gs-tools",
-            icon:<FaHome />
+            icon:<FaScrewdriverWrench />
         },
         {
             name: "リンク集",
@@ -24,10 +24,10 @@ export default function Footer() {
         },
     ]
     return (
-        <footer className="h-footer bg-white px-4 border-t border-neutral-700 shadow-lg fixed bottom-0 left-0 right-0">
+        <footer className="h-footer bg-bar px-6 border-t border-neutral-300 shadow-lg fixed bottom-0 left-0 right-0">
             <ul className="flex items-center justify-between">
                 {MenuList.map((menu) => (
-                    <div key={menu.name} className="text-center mt-2">
+                    <div key={menu.name} className="text-bar-text text-center mt-2 flex flex-col">
                       <li className="text-4xl">{menu.icon}</li>
                       <p className="text-xs">{menu.name}</p>
                     </div>
