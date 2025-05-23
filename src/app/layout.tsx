@@ -62,7 +62,7 @@ export default function RootLayout({
         {/* サイドバー */}
         <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
         
-        <main className="flex-grow mb-footer">
+        <main className="flex-grow mb-footer pt-16">
           {children}
         </main>
         <Footer />
