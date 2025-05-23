@@ -20,19 +20,21 @@ export function DroppableArea({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-1 p-2 rounded-r-lg flex flex-wrap gap-2 items-start transition-colors ${
+      className={`flex-1 p-2 rounded-r-lg transition-colors ${
         isOver ? 'bg-blue-100' : 'bg-gray-50'
       }`}
     >
-      {characters.map((char) => (
-        <DraggableCharacter 
-          key={char.id} 
-          character={char} 
-          fixedSize={true} 
-        />
-      ))}
+      <div className="grid grid-cols-4 gap-2">
+        {characters.map((char) => (
+          <DraggableCharacter 
+            key={char.id} 
+            character={char} 
+            fixedSize={false}
+          />
+        ))}
+      </div>
       {characters.length === 0 && (
-        <div className="text-gray-400 italic text-sm self-center">
+        <div className="text-gray-400 italic text-sm self-center p-4">
           キャラクターをここにドラッグしてください
         </div>
       )}
