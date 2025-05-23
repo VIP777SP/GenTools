@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -10,6 +10,7 @@ import {
   useSensor,
   useSensors,
   UniqueIdentifier,
+  closestCenter,
 } from '@dnd-kit/core';
 import { TierRow } from './TierRow';
 import { CharacterSelection } from './CharacterSelection';
@@ -49,13 +50,13 @@ export default function TierMakerClient() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 3,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 100,
-        tolerance: 5,
+        delay: 50,
+        tolerance: 3,
       },
     })
   );
@@ -73,11 +74,15 @@ export default function TierMakerClient() {
   // ドラッグ開始ハンドラー
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id);
+    // ドラッグ中はページスクロールを無効化
+    document.body.style.overflow = 'hidden';
   };
 
   // ドラッグ終了ハンドラー
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null);
+    // ページスクロールを再有効化
+    document.body.style.overflow = '';
     
     const { active, over } = event;
     
@@ -96,18 +101,23 @@ export default function TierMakerClient() {
     const character = charlist.find(char => char.id === characterId);
     if (!character) return;
 
-    // 既に配置済みの場合は処理しない
-    if (isCharacterPlaced(characterId)) return;
-
-    // ティアに追加
+    // ティアを更新（既存の配置があれば削除し、新しいティアに追加）
     setTiers(prev => prev.map(tier => {
       if (tier.id === tierId) {
+        // 新しいティアに追加（重複チェック）
+        const alreadyExists = tier.characters.some(char => char.id === characterId);
+        if (alreadyExists) return tier;
         return {
           ...tier,
           characters: [...tier.characters, character]
         };
+      } else {
+        // 他のティアから削除
+        return {
+          ...tier,
+          characters: tier.characters.filter(char => char.id !== characterId)
+        };
       }
-      return tier;
     }));
   };
 
@@ -157,11 +167,19 @@ export default function TierMakerClient() {
     setTiers(prev => prev.map(tier => ({ ...tier, characters: [] })));
   };
 
+  // コンポーネントのクリーンアップ時にページスクロールを復元
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   return (
     <DndContext 
       sensors={sensors} 
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      collisionDetection={closestCenter}
     >
       <div className="min-h-screen bg-gray-100">
         {/* メインコンテンツエリア */}
@@ -218,6 +236,7 @@ export default function TierMakerClient() {
         {/* キャラクター選択エリア */}
         <CharacterSelection 
           availableCharacters={availableCharacters}
+          isDragging={activeId !== null}
         />
       </div>
     </DndContext>

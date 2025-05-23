@@ -4,9 +4,11 @@ import { DraggableCharacter } from './DraggableCharacter';
 
 // キャラクター選択エリアコンポーネント
 export function CharacterSelection({ 
-  availableCharacters
+  availableCharacters,
+  isDragging
 }: { 
   availableCharacters: character[];
+  isDragging: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isSwipping, setIsSwipping] = useState(false);
@@ -55,6 +57,9 @@ export function CharacterSelection({
 
   // スワイプ開始
   const handleSwipeStart = (e: React.TouchEvent | React.MouseEvent) => {
+    // ドラッグ中はスクロールを無効化
+    if (isDragging) return;
+
     // 進行中のアニメーションを停止
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
@@ -73,7 +78,7 @@ export function CharacterSelection({
 
   // スワイプ中
   const handleSwipeMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!isSwipping || !scrollRef.current) return;
+    if (!isSwipping || !scrollRef.current || isDragging) return;
     
     e.preventDefault();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
@@ -98,8 +103,8 @@ export function CharacterSelection({
   const handleSwipeEnd = () => {
     setIsSwipping(false);
     
-    // 慣性スクロールを開始
-    if (Math.abs(velocity) > 1) { // 最小速度以上の場合のみ慣性スクロール
+    // ドラッグ中でなければ慣性スクロールを開始
+    if (!isDragging && Math.abs(velocity) > 1) { // 最小速度以上の場合のみ慣性スクロール
       animateInertia(velocity);
     }
   };
@@ -112,6 +117,15 @@ export function CharacterSelection({
       }
     };
   }, []);
+
+  // ドラッグ中は強制的にアニメーション停止
+  useEffect(() => {
+    if (isDragging && animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+      setIsSwipping(false);
+    }
+  }, [isDragging]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-300 shadow-lg z-40">

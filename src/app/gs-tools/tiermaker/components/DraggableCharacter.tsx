@@ -32,14 +32,14 @@ export function DraggableCharacter({
       {...listeners}
       {...attributes}
       className={`${fixedSize 
-        ? "w-16 h-16" 
+        ? "w-20 h-20" 
         : "aspect-square"
       } border-2 border-gray-300 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing hover:border-blue-400 transition-all duration-75 select-none relative ${
         isDragging ? 'opacity-50' : ''
       }`}
       style={{
         ...style,
-        touchAction: 'manipulation',
+        touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none',
       }}
@@ -49,8 +49,8 @@ export function DraggableCharacter({
         <Image
           src={character.iconUrl}
           alt={character.name}
-          width={64}
-          height={64}
+          width={80}
+          height={80}
           className="w-full h-full object-cover"
           draggable={false}
           style={{
