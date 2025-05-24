@@ -370,3 +370,82 @@ const handleSwipeMove = (e: React.TouchEvent | React.MouseEvent) => {
 - 画像として保存機能（html2canvas使用予定）
 - ティア行の並び替え機能
 - キーボードショートカット対応
+
+# CursorRule - 原神ティアメーカー開発メモ
+
+## プロジェクト概要
+原神キャラクターのティアメーカー（ランキング作成）アプリケーション
+- Next.js + TypeScript + Tailwind CSS + @dnd-kit
+
+## 開発履歴
+
+### ドラッグ&ドロップ機能実装 ✅
+- モバイル対応のタッチ操作とドラッグ操作の分離
+- 上部スワイプエリア：キャラクター一覧の横スクロール制御
+- 下部エリア：キャラクターのドラッグ&ドロップ機能
+- PointerSensor + TouchSensor の併用でモバイル最適化
+
+### UI調整 ✅
+- ティアエリア：5列 → 4列に変更
+- キャラクター画像サイズ：64px → 80px
+- スワイプバーの高さ調整：h-8 → h-6
+
+### データ管理システム ✅ 
+#### キャラクターデータ (charlist.ts)
+- character型定義（id, name, iconUrl）
+- 97キャラクター登録済み
+- 元素別分類コメント付き
+
+#### 武器データ (weaponlist.ts) ✅ NEW!
+- weapon型定義（id, name, iconUrl, type, rarity）
+- 104武器登録済み（5星29個、4星51個、3星24個）
+- 武器種類：剣、大剣、長柄武器、弓、法器
+- レアリティ：3、4、5星
+
+### アセット管理 ✅
+#### 武器アイコンダウンロード自動化 ✅ NEW!
+- weapon_icons_downloader.py スクリプト作成
+- 原神Wikiから104個の武器アイコンを自動取得
+- 英語略称ファイル名で統一（例：mistsplitter-icon.png）
+- 成功率：104/104 (100%)
+
+## 技術的学習ポイント
+
+### モバイルドラッグ&ドロップ最適化
+```typescript
+// タッチとドラッグの分離
+const sensors = useSensors(
+  useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
+  useSensor(TouchSensor, { activationConstraint: { delay: 50, tolerance: 3 } })
+);
+```
+
+### 慣性スクロール実装
+```typescript
+// 速度計算による慣性アニメーション
+const velocity = (deltaX / deltaTime) * 1.2;
+const animateInertia = () => {
+  velocity *= 0.95; // 摩擦係数
+  if (Math.abs(velocity) > 0.5) {
+    requestAnimationFrame(animateInertia);
+  }
+};
+```
+
+### TypeScript型定義活用
+```typescript
+// Union型でプロパティ制限
+type: '剣' | '大剣' | '長柄武器' | '弓' | '法器',
+rarity: 3 | 4 | 5
+```
+
+### Python自動化スクリプト
+- requests + pathlib でファイル管理
+- 複数URLソースからのフォールバック取得
+- エラーハンドリングとプレースホルダー生成
+
+## 次のタスク
+- [ ] 武器ティアメーカー機能実装
+- [ ] 武器種類別フィルタリング
+- [ ] レアリティ別表示切り替え
+- [ ] セーブ/ロード機能
