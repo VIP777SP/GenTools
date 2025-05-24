@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useDroppable } from '@dnd-kit/core';
 import { character } from '@/libs/charlist';
 import { CharacterBuild } from '../types';
 import { DraggableCharacter } from './DraggableCharacter';
@@ -23,6 +24,11 @@ export function CharacterSelection({
   const [lastTime, setLastTime] = useState(0);
   const [velocity, setVelocity] = useState(0);
   const animationRef = useRef<number | null>(null);
+
+  // ドロップ可能エリアとしての設定
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'character-selection',
+  });
 
   // 慣性スクロールアニメーション
   const animateInertia = (initialVelocity: number) => {
@@ -133,7 +139,12 @@ export function CharacterSelection({
   }, [isDragging]);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-300 shadow-lg z-40">
+    <div 
+      ref={setNodeRef}
+      className={`fixed bottom-0 left-0 right-0 border-t-2 border-gray-300 shadow-lg z-40 transition-colors ${
+        isOver ? 'bg-blue-50 border-blue-400' : 'bg-white'
+      }`}
+    >
       {/* 上段：横スワイプ検知エリア */}
       <div className="border-b border-gray-200 bg-gray-50">
         <div 

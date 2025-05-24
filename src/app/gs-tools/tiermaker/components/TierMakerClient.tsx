@@ -100,14 +100,22 @@ export default function TierMakerClient() {
     }
     
     const characterId = parseInt(active.id as string);
-    const tierId = over.id as string;
+    const overId = over.id as string;
     
-    handleCharacterDrop(tierId, characterId);
+    // キャラクター選択エリアにドロップされた場合
+    if (overId === 'character-selection') {
+      handleReturnToSelection(characterId);
+      return;
+    }
+    
+    // 通常のティアエリアにドロップされた場合
+    handleCharacterDrop(overId, characterId);
   };
 
   // キャラクターをTierに配置
   const handleCharacterDrop = (tierId: string, characterId: number) => {
-    const character = charlist.find(char => char.id === characterId);
+    // findCharacterById を使って、オリジナルまたはコピーされたキャラクターを取得
+    const character = findCharacterById(characterId);
     if (!character) return;
 
     // ティアを更新（既存の配置があれば削除し、新しいティアに追加）
@@ -130,10 +138,46 @@ export default function TierMakerClient() {
     }));
   };
 
+  // キャラクターを選択リストに戻す
+  const handleReturnToSelection = (characterId: number) => {
+    // 全てのティアからキャラクターを削除
+    setTiers(prev => prev.map(tier => ({
+      ...tier,
+      characters: tier.characters.filter(char => char.id !== characterId)
+    })));
+
+    // コピーされたキャラクターの場合はビルド設定も削除
+    // オリジナルキャラクターの場合は自動的に選択リストに戻る
+    const originalCharacter = charlist.find(char => char.id === characterId);
+    if (!originalCharacter) {
+      // コピーされたキャラクターの場合、ビルド設定も削除
+      setCharacterBuilds(prev => {
+        const newBuilds = { ...prev };
+        delete newBuilds[characterId];
+        return newBuilds;
+      });
+    }
+  };
+
   // IDからキャラクターを取得
   const findCharacterById = (id: UniqueIdentifier): character | undefined => {
     const characterId = parseInt(id as string);
-    return charlist.find(char => char.id === characterId);
+    
+    // まずオリジナルのcharlistから探す
+    const originalCharacter = charlist.find(char => char.id === characterId);
+    if (originalCharacter) {
+      return originalCharacter;
+    }
+    
+    // 見つからない場合は、ティアに配置されているコピーされたキャラクターから探す
+    for (const tier of tiers) {
+      const foundCharacter = tier.characters.find(char => char.id === characterId);
+      if (foundCharacter) {
+        return foundCharacter;
+      }
+    }
+    
+    return undefined;
   };
 
   // ビルド設定を開く
@@ -199,6 +243,42 @@ export default function TierMakerClient() {
     ));
   };
 
+  // キャラクターをコピー
+  const handleCopyCharacter = (tierId: string, character: character) => {
+    // 一意のIDを生成（タイムスタンプとランダム値を組み合わせ）
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000);
+    const newId = parseInt(`${character.id}${timestamp}${random}`.slice(-8)); // 8桁に調整
+    
+    // 新しいキャラクターオブジェクトを作成（元のキャラクターのコピー）
+    const copiedCharacter = {
+      ...character,
+      id: newId
+    };
+
+    // 指定されたティアにコピーを追加
+    setTiers(prev => prev.map(tier => {
+      if (tier.id === tierId) {
+        return {
+          ...tier,
+          characters: [...tier.characters, copiedCharacter]
+        };
+      }
+      return tier;
+    }));
+
+    // 元のキャラクターのビルド設定をコピーにも適用
+    if (characterBuilds[character.id]) {
+      setCharacterBuilds(prev => ({
+        ...prev,
+        [newId]: {
+          ...characterBuilds[character.id],
+          characterId: newId
+        }
+      }));
+    }
+  };
+
   // リセット
   const handleReset = () => {
     setTiers(prev => prev.map(tier => ({ ...tier, characters: [] })));
@@ -250,7 +330,7 @@ export default function TierMakerClient() {
             </div>
             
             {/* Tierエリア */}
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-visible">
               {tiers.map((tier) => (
                 <TierRow 
                   key={tier.id} 
@@ -262,6 +342,7 @@ export default function TierMakerClient() {
                   onColorChange={handleColorChange}
                   onDelete={handleDeleteTier}
                   onBuildConfig={handleOpenBuildConfig}
+                  onCopy={handleCopyCharacter}
                   canDelete={tiers.length > 1}
                 />
               ))}

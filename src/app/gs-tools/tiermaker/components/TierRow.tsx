@@ -14,6 +14,7 @@ export function TierRow({
   onColorChange,
   onDelete,
   onBuildConfig,
+  onCopy,
   canDelete
 }: { 
   tier: TierDefinition; 
@@ -24,6 +25,7 @@ export function TierRow({
   onColorChange: (tierId: string, newColor: string) => void;
   onDelete: (tierId: string) => void;
   onBuildConfig: (character: character) => void;
+  onCopy: (tierId: string, character: character) => void;
   canDelete: boolean;
 }) {
   const [showSettings, setShowSettings] = useState(false);
@@ -54,7 +56,7 @@ export function TierRow({
   };
 
   return (
-    <div className="flex items-stretch border-2 border-gray-300 rounded-lg mb-2 min-h-[80px] relative">
+    <div className="flex items-stretch border-2 border-gray-300 rounded-lg mb-2 min-h-[80px] relative overflow-visible">
       {/* Tier ラベル - 最小幅に縮小 */}
       <div className={`w-12 min-w-[48px] flex flex-col items-center justify-center text-white font-bold ${tier.color} rounded-l-lg relative`}>
         <span 
@@ -160,6 +162,7 @@ export function TierRow({
         characterBuilds={characterBuilds}
         onDrop={onDrop}
         onBuildConfig={onBuildConfig}
+        onCopy={onCopy}
       />
     </div>
   );

@@ -7,6 +7,53 @@ Genshin Impact ティアメーカーアプリケーション
 
 ## 進捗ログ
 
+### 2024/12/19 - キャラクター選択リストをドロップエリア化
+- **UX最適化: 固定エリアから選択リスト直接ドロップに変更**
+  - CharacterSelection.tsx をdroppableエリア化:
+    - useDroppable (id: 'character-selection') 追加
+    - ドラッグオーバー時の視覚フィードバック (青系ハイライト)
+    - ドロップ時のヒントメッセージ表示
+  - TierMakerClient.tsx 処理変更:
+    - 固定ReturnArea削除
+    - character-selection へのドロップ検出
+    - より自然なドラッグ&ドロップフロー
+  - TrashArea.tsx 削除:
+    - 固定エリア不要になったため完全削除
+    - 画面右下のスペース解放
+  - **操作性向上**: キャラクターを元の場所（選択リスト）に直接戻す直感的操作
+
+### 2024/12/19 - 選択リストに戻すエリア実装
+- **UX改善: 削除からリストに戻すに変更**
+  - TrashArea.tsx → ReturnArea.tsx に変更:
+    - アイコン: IoTrashOutline → IoArrowBackOutline
+    - 色: 赤系 → 青系 (削除の危険性から安全な操作に)
+    - ID: 'trash-area' → 'return-area'
+    - ツールチップ: 「削除する」→「リストに戻す」
+  - TierMakerClient.tsx ロジック変更:
+    - handleDeleteFromTrash → handleReturnToSelection
+    - オリジナルキャラクター: ティアから削除のみ（自動的に選択リストに戻る）
+    - コピーキャラクター: ビルド設定も削除して完全削除
+    - より直感的なUX: 不要なキャラクターは選択リストに戻せる
+
+### 2024/12/19 - ゴミ箱エリア実装
+- **スマホ対応の削除機能実装** (ホバー削除からドラッグ削除に変更)
+  - TrashArea.tsx 新規作成:
+    - 画面右下固定のゴミ箱アイコン
+    - @dnd-kit droppable エリア (id: 'trash-area')
+    - ドラッグオーバー時のアニメーション・ツールチップ
+    - IoTrashOutline アイコン使用
+  - TierMakerClient.tsx 拡張:
+    - ゴミ箱ドロップ検出ロジック追加
+    - handleDeleteFromTrash 実装
+    - オリジナル/コピーキャラクターの判別削除
+  - DraggableCharacter.tsx 削除ボタン除去:
+    - ホバー削除ボタン完全削除
+    - シンプルなキャラクター表示に戻す
+    - スマホのタッチ操作に最適化
+  - DroppableArea.tsx, TierRow.tsx:
+    - remove 関連 props とロジック削除
+    - コピー機能のみ維持
+
 ### 2024/12/19 - ビルド設定機能実装
 - **キャラクタービルド表示機能を完全実装**
   - 型定義追加: CharacterBuild (凸数、武器、聖遺物)

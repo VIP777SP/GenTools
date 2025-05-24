@@ -10,33 +10,41 @@ export function DroppableArea({
   characters,
   characterBuilds,
   onDrop,
-  onBuildConfig
+  onBuildConfig,
+  onCopy
 }: {
   tierId: string;
   characters: character[];
   characterBuilds: Record<number, CharacterBuild>;
   onDrop: (tierId: string, characterId: number) => void;
   onBuildConfig: (character: character) => void;
+  onCopy: (tierId: string, character: character) => void;
 }) {
   const { isOver, setNodeRef } = useDroppable({
     id: tierId,
   });
+
+  const handleCopy = (character: character) => {
+    onCopy(tierId, character);
+  };
 
   return (
     <div
       ref={setNodeRef}
       className={`flex-1 p-2 rounded-r-lg transition-colors ${
         isOver ? 'bg-blue-100' : 'bg-gray-50'
-      }`}
+      } overflow-visible`}
     >
-      <div className="grid grid-cols-4 gap-2">
-        {characters.map((char) => (
+      <div className="grid grid-cols-4 gap-2 overflow-visible">
+        {characters.map((char, index) => (
           <DraggableCharacter 
-            key={char.id} 
+            key={`${char.id}-${index}`}
             character={char} 
             fixedSize={false}
             build={characterBuilds[char.id]}
             onBuildConfig={onBuildConfig}
+            onCopy={handleCopy}
+            showCopyButton={true}
           />
         ))}
       </div>

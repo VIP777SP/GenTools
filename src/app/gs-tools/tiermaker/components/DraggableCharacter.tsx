@@ -3,19 +3,23 @@ import Image from 'next/image';
 import { useDraggable } from '@dnd-kit/core';
 import { character } from '@/libs/charlist';
 import { CharacterBuild } from '../types';
-import { IoSettingsSharp } from 'react-icons/io5';
+import { IoSettingsSharp, IoCopyOutline } from 'react-icons/io5';
 
 // ドラッグ可能なキャラクターアイテムコンポーネント
 export function DraggableCharacter({ 
   character, 
   fixedSize = false,
   build,
-  onBuildConfig
+  onBuildConfig,
+  onCopy,
+  showCopyButton = false
 }: { 
   character: character;
   fixedSize?: boolean;
   build?: CharacterBuild;
   onBuildConfig?: (character: character) => void;
+  onCopy?: (character: character) => void;
+  showCopyButton?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<number>(80); // デフォルト80px
@@ -63,6 +67,12 @@ export function DraggableCharacter({
     onBuildConfig?.(character);
   };
 
+  // コピーボタンのクリック処理
+  const handleCopyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onCopy?.(character);
+  };
+
   // 凸数の表示テキスト
   const getConstellationText = (constellation?: number) => {
     if (constellation === undefined || constellation === 0) return 'C0';
@@ -82,6 +92,7 @@ export function DraggableCharacter({
         gap: 'gap-0.5',
         position: 'top-0.5 left-0.5',
         buttonPosition: 'top-0 right-0',
+        copyButtonPosition: 'bottom-0 right-0',
         imageSize: 12
       };
     } else if (size <= 80) {
@@ -95,6 +106,7 @@ export function DraggableCharacter({
         gap: 'gap-0.5',
         position: 'top-0.5 left-0.5',
         buttonPosition: 'top-0 right-0',
+        copyButtonPosition: 'bottom-0 right-0',
         imageSize: 16
       };
     } else if (size <= 120) {
@@ -108,6 +120,7 @@ export function DraggableCharacter({
         gap: 'gap-1',
         position: 'top-1 left-1',
         buttonPosition: 'top-0 right-0',
+        copyButtonPosition: 'bottom-0 right-0',
         imageSize: 20
       };
     } else {
@@ -121,6 +134,7 @@ export function DraggableCharacter({
         gap: 'gap-1',
         position: 'top-1 left-1',
         buttonPosition: 'top-0 right-0',
+        copyButtonPosition: 'bottom-0 right-0',
         imageSize: 24
       };
     }
@@ -235,6 +249,18 @@ export function DraggableCharacter({
           style={{ pointerEvents: 'auto' }}
         >
           <IoSettingsSharp size={sizeConfig.buttonIconSize} />
+        </button>
+      )}
+
+      {/* コピーボタン（右下隅） */}
+      {showCopyButton && onCopy && (
+        <button
+          onClick={handleCopyClick}
+          className={`absolute ${sizeConfig.copyButtonPosition} ${sizeConfig.buttonSize} bg-green-500 text-white rounded text-xs font-bold hover:bg-green-600 transition-colors shadow-sm flex items-center justify-center`}
+          title="キャラクターをコピー"
+          style={{ pointerEvents: 'auto' }}
+        >
+          <IoCopyOutline size={sizeConfig.buttonIconSize} />
         </button>
       )}
     </div>
