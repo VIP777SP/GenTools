@@ -1,13 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { character } from '@/libs/charlist';
+import { CharacterBuild } from '../types';
 import { DraggableCharacter } from './DraggableCharacter';
 
 // キャラクター選択エリアコンポーネント
 export function CharacterSelection({ 
   availableCharacters,
+  characterBuilds,
+  onBuildConfig,
   isDragging
 }: { 
   availableCharacters: character[];
+  characterBuilds: Record<number, CharacterBuild>;
+  onBuildConfig: (character: character) => void;
   isDragging: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -166,7 +171,12 @@ export function CharacterSelection({
               key={character.id}
               className="flex-shrink-0 relative group"
             >
-              <DraggableCharacter character={character} fixedSize={true} />
+              <DraggableCharacter 
+                character={character} 
+                fixedSize={true}
+                build={characterBuilds[character.id]}
+                onBuildConfig={onBuildConfig}
+              />
             </div>
           ))}
           {availableCharacters.length === 0 && (

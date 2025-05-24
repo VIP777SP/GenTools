@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { character } from '@/libs/charlist';
-import { TierDefinition, TIER_COLORS, getLighterBgColor, getLabelTextSize } from '../types';
+import { TierDefinition, TIER_COLORS, getLighterBgColor, getLabelTextSize, CharacterBuild } from '../types';
 import { DroppableArea } from './DroppableArea';
+import { HiDotsVertical } from 'react-icons/hi';
 
 // Tier行コンポーネント
 export function TierRow({ 
   tier, 
   characters, 
+  characterBuilds,
   onDrop,
   onLabelChange,
   onColorChange,
   onDelete,
+  onBuildConfig,
   canDelete
 }: { 
   tier: TierDefinition; 
   characters: character[];
+  characterBuilds: Record<number, CharacterBuild>;
   onDrop: (tierId: string, characterId: number) => void;
   onLabelChange: (tierId: string, newLabel: string) => void;
   onColorChange: (tierId: string, newColor: string) => void;
   onDelete: (tierId: string) => void;
+  onBuildConfig: (character: character) => void;
   canDelete: boolean;
 }) {
   const [showSettings, setShowSettings] = useState(false);
@@ -50,28 +55,28 @@ export function TierRow({
 
   return (
     <div className="flex items-stretch border-2 border-gray-300 rounded-lg mb-2 min-h-[80px] relative">
-      {/* Tier ラベル */}
-      <div className={`w-20 flex items-center justify-center text-white font-bold ${tier.color} rounded-l-lg relative`}>
+      {/* Tier ラベル - 最小幅に縮小 */}
+      <div className={`w-12 min-w-[48px] flex flex-col items-center justify-center text-white font-bold ${tier.color} rounded-l-lg relative`}>
         <span 
-          className={`flex-1 text-center ${getLabelTextSize(tier.label)} break-all overflow-hidden`}
+          className="text-center break-all overflow-hidden leading-tight px-1"
           style={{ 
-            fontSize: tier.label.length <= 3 ? '1.25rem' : 
-                     tier.label.length <= 5 ? '1.125rem' : 
-                     tier.label.length <= 8 ? '0.75rem' : '0.625rem',
-            lineHeight: tier.label.length > 3 ? '1.1' : '1.75',
-            padding: tier.label.length > 5 ? '0 2px' : '0'
+            fontSize: tier.label.length <= 2 ? '1rem' : 
+                     tier.label.length <= 4 ? '0.75rem' : 
+                     tier.label.length <= 6 ? '0.625rem' : '0.5rem',
+            wordBreak: 'break-all',
+            lineHeight: '1.1'
           }}
         >
           {tier.label}
         </span>
         
-        {/* 設定ボタン */}
+        {/* 設定ボタン - 右上隅に配置 */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className={`absolute top-1 left-1 w-5 h-5 ${getLighterBgColor(tier.color).normal} rounded text-xs hover:${getLighterBgColor(tier.color).hover} transition-all flex items-center justify-center text-white`}
+          className={`absolute top-0.5 right-0.5 w-4 h-4 ${getLighterBgColor(tier.color).normal} rounded text-xs hover:${getLighterBgColor(tier.color).hover} transition-all flex items-center justify-center text-white`}
           title="設定"
         >
-          ⋯
+          <HiDotsVertical size={10} />
         </button>
 
         {/* 設定パネル */}
@@ -83,8 +88,8 @@ export function TierRow({
               onClick={handleOutsideClick}
             />
             
-            {/* 設定パネル */}
-            <div className="absolute top-1 left-1 z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
+            {/* 設定パネル - 左側に表示 */}
+            <div className="absolute top-1 left-full ml-2 z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
               <h4 className="text-gray-800 font-bold mb-3 text-sm">Tier設定</h4>
               
               {/* ラベル編集 */}
@@ -98,8 +103,8 @@ export function TierRow({
                   onChange={(e) => setEditLabel(e.target.value)}
                   onBlur={handleLabelSubmit}
                   className="w-full px-3 py-1 border border-gray-300 rounded text-gray-800 text-sm focus:outline-none focus:border-blue-500"
-                  maxLength={10}
-                  placeholder="例: S, SS+, 神Tier"
+                  maxLength={8}
+                  placeholder="例: S, SS+, 神"
                 />
               </div>
 
@@ -148,11 +153,13 @@ export function TierRow({
         )}
       </div>
       
-      {/* キャラクター配置エリア */}
+      {/* キャラクター配置エリア - より広いスペース */}
       <DroppableArea
         tierId={tier.id}
         characters={characters}
+        characterBuilds={characterBuilds}
         onDrop={onDrop}
+        onBuildConfig={onBuildConfig}
       />
     </div>
   );

@@ -1,17 +1,22 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { character } from '@/libs/charlist';
+import { CharacterBuild } from '../types';
 import { DraggableCharacter } from './DraggableCharacter';
 
 // ドロップ可能なエリアコンポーネント
 export function DroppableArea({
   tierId,
   characters,
-  onDrop
+  characterBuilds,
+  onDrop,
+  onBuildConfig
 }: {
   tierId: string;
   characters: character[];
+  characterBuilds: Record<number, CharacterBuild>;
   onDrop: (tierId: string, characterId: number) => void;
+  onBuildConfig: (character: character) => void;
 }) {
   const { isOver, setNodeRef } = useDroppable({
     id: tierId,
@@ -30,6 +35,8 @@ export function DroppableArea({
             key={char.id} 
             character={char} 
             fixedSize={false}
+            build={characterBuilds[char.id]}
+            onBuildConfig={onBuildConfig}
           />
         ))}
       </div>

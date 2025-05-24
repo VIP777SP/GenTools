@@ -1,4 +1,14 @@
 import { character } from '@/libs/charlist';
+import { weapon } from '@/libs/weaponlist';
+import { artifact } from '@/libs/artifacts';
+
+// ビルド情報の型定義
+export interface CharacterBuild {
+  characterId: number;
+  constellation?: number; // 凸数 (0-6)
+  weapon?: weapon;
+  artifact?: artifact;
+}
 
 // デフォルトのTier色一覧
 export const TIER_COLORS = [

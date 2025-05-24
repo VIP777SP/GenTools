@@ -15,7 +15,9 @@ import {
 import { TierRow } from './TierRow';
 import { CharacterSelection } from './CharacterSelection';
 import { DraggableCharacter } from './DraggableCharacter';
+import { BuildConfigModal } from './BuildConfigModal';
 import { charlist, character } from '@/libs/charlist';
+import { CharacterBuild } from '../types';
 
 // ティア定義
 const tierDefinitions = [
@@ -42,6 +44,13 @@ export default function TierMakerClient() {
   const [tiers, setTiers] = useState<TierData[]>(
     tierDefinitions.map(def => ({ ...def, characters: [] }))
   );
+
+  // ビルド情報
+  const [characterBuilds, setCharacterBuilds] = useState<Record<number, CharacterBuild>>({});
+
+  // ビルド設定モーダル
+  const [buildModalOpen, setBuildModalOpen] = useState(false);
+  const [selectedCharacterForBuild, setSelectedCharacterForBuild] = useState<character | null>(null);
 
   // ドラッグ状態
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -127,6 +136,34 @@ export default function TierMakerClient() {
     return charlist.find(char => char.id === characterId);
   };
 
+  // ビルド設定を開く
+  const handleOpenBuildConfig = (character: character) => {
+    setSelectedCharacterForBuild(character);
+    setBuildModalOpen(true);
+  };
+
+  // ビルド設定を保存
+  const handleSaveBuild = (build: CharacterBuild) => {
+    setCharacterBuilds(prev => ({
+      ...prev,
+      [build.characterId]: build
+    }));
+  };
+
+  // 全キャラクターのビルド設定を開く
+  const handleOpenBuildDefine = () => {
+    // 配置されているキャラクターの一覧を取得
+    const placedCharacters = tiers.flatMap(tier => tier.characters);
+    if (placedCharacters.length === 0) {
+      alert('キャラクターをティアに配置してからビルドを定義してください。');
+      return;
+    }
+    
+    // 最初のキャラクターを選択してモーダルを開く
+    setSelectedCharacterForBuild(placedCharacters[0]);
+    setBuildModalOpen(true);
+  };
+
   // 新しいTier行を追加
   const handleAddTier = () => {
     const newId = `tier_${Date.now()}`;
@@ -165,6 +202,7 @@ export default function TierMakerClient() {
   // リセット
   const handleReset = () => {
     setTiers(prev => prev.map(tier => ({ ...tier, characters: [] })));
+    setCharacterBuilds({});
   };
 
   // コンポーネントのクリーンアップ時にページスクロールを復元
@@ -203,6 +241,12 @@ export default function TierMakerClient() {
               >
                 リセット
               </button>
+              <button
+                onClick={handleOpenBuildDefine}
+                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+              >
+                🔧 ビルドを定義
+              </button>
             </div>
             
             {/* Tierエリア */}
@@ -212,10 +256,12 @@ export default function TierMakerClient() {
                   key={tier.id} 
                   tier={tier}
                   characters={tier.characters}
+                  characterBuilds={characterBuilds}
                   onDrop={handleCharacterDrop}
                   onLabelChange={handleLabelChange}
                   onColorChange={handleColorChange}
                   onDelete={handleDeleteTier}
+                  onBuildConfig={handleOpenBuildConfig}
                   canDelete={tiers.length > 1}
                 />
               ))}
@@ -229,6 +275,7 @@ export default function TierMakerClient() {
             <DraggableCharacter
               character={findCharacterById(activeId)!}
               fixedSize={true}
+              build={characterBuilds[parseInt(activeId as string)]}
             />
           ) : null}
         </DragOverlay>
@@ -236,7 +283,18 @@ export default function TierMakerClient() {
         {/* キャラクター選択エリア */}
         <CharacterSelection 
           availableCharacters={availableCharacters}
+          characterBuilds={characterBuilds}
+          onBuildConfig={handleOpenBuildConfig}
           isDragging={activeId !== null}
+        />
+
+        {/* ビルド設定モーダル */}
+        <BuildConfigModal
+          isOpen={buildModalOpen}
+          onClose={() => setBuildModalOpen(false)}
+          character={selectedCharacterForBuild}
+          currentBuild={selectedCharacterForBuild ? characterBuilds[selectedCharacterForBuild.id] : undefined}
+          onSaveBuild={handleSaveBuild}
         />
       </div>
     </DndContext>
