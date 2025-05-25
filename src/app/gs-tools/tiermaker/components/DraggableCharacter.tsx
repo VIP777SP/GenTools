@@ -75,8 +75,15 @@ export function DraggableCharacter({
 
   // 凸数の表示テキスト
   const getConstellationText = (constellation?: number) => {
-    if (constellation === undefined || constellation === 0) return 'C0';
-    return `C${constellation}`;
+    if (constellation === undefined) return null; // 未設定は非表示
+    if (constellation === -1) return '×'; // 非表示を明示
+    if (constellation === 0) return 'C0'; // 0凸
+    return `C${constellation}`; // 1-6凸
+  };
+
+  // 凸数を表示するかどうかの判定
+  const shouldShowConstellation = (constellation?: number) => {
+    return constellation !== undefined && constellation !== -1;
   };
 
   // コンテナサイズに基づく動的設定
@@ -204,8 +211,8 @@ export function DraggableCharacter({
       {build && (
         <div className={`absolute ${sizeConfig.position} flex flex-col ${sizeConfig.gap}`}>
           {/* 凸数表示 */}
-          {build.constellation !== undefined && build.constellation > 0 && (
-            <div className={`bg-yellow-500 text-white ${sizeConfig.fontSize} ${sizeConfig.padding} rounded text-center font-bold min-w-[14px] shadow-sm`}>
+          {shouldShowConstellation(build.constellation) && (
+            <div className={`${build.constellation === -1 ? 'bg-red-500' : 'bg-yellow-500'} text-white ${sizeConfig.fontSize} ${sizeConfig.padding} rounded text-center font-bold min-w-[14px] shadow-sm`}>
               {getConstellationText(build.constellation)}
             </div>
           )}

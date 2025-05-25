@@ -20,7 +20,7 @@ export function BuildConfigModal({
   currentBuild,
   onSaveBuild
 }: BuildConfigModalProps) {
-  const [constellation, setConstellation] = useState<number>(0);
+  const [constellation, setConstellation] = useState<number>(-1);
   const [selectedWeapon, setSelectedWeapon] = useState<weapon | null>(null);
   const [selectedArtifact, setSelectedArtifact] = useState<artifact | null>(null);
   const [weaponSearchTerm, setWeaponSearchTerm] = useState('');
@@ -29,7 +29,7 @@ export function BuildConfigModal({
   // モーダルが開かれたときに現在のビルド情報を設定
   useEffect(() => {
     if (isOpen && character) {
-      setConstellation(currentBuild?.constellation || 0);
+      setConstellation(currentBuild?.constellation ?? -1);
       setSelectedWeapon(currentBuild?.weapon || null);
       setSelectedArtifact(currentBuild?.artifact || null);
       setWeaponSearchTerm('');
@@ -63,7 +63,7 @@ export function BuildConfigModal({
   };
 
   const handleReset = () => {
-    setConstellation(0);
+    setConstellation(-1);
     setSelectedWeapon(null);
     setSelectedArtifact(null);
   };
@@ -101,6 +101,17 @@ export function BuildConfigModal({
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3">凸数</h3>
             <div className="flex gap-2">
+              <button
+                onClick={() => setConstellation(-1)}
+                className={`w-12 h-12 rounded-lg border-2 font-bold transition-colors ${
+                  constellation === -1
+                    ? 'bg-red-500 text-white border-red-500'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-red-300'
+                }`}
+                title="凸数非表示"
+              >
+                ×
+              </button>
               {[0, 1, 2, 3, 4, 5, 6].map((c) => (
                 <button
                   key={c}

@@ -141,7 +141,7 @@ export function CharacterSelection({
   return (
     <div 
       ref={setNodeRef}
-      className={`fixed bottom-0 left-0 right-0 border-t-2 border-gray-300 shadow-lg z-40 transition-colors ${
+      className={`fixed bottom-[2.5rem] left-0 right-0 border-t-2 border-gray-300 shadow-lg z-50 transition-colors ${
         isOver ? 'bg-blue-50 border-blue-400' : 'bg-white'
       }`}
     >

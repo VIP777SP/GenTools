@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import html2canvas from 'html2canvas';
 import {
   DndContext,
   DragEndEvent,
@@ -12,6 +13,7 @@ import {
   UniqueIdentifier,
   closestCenter,
 } from '@dnd-kit/core';
+import { IoAdd, IoRefresh, IoCamera } from 'react-icons/io5';
 import { TierRow } from './TierRow';
 import { CharacterSelection } from './CharacterSelection';
 import { DraggableCharacter } from './DraggableCharacter';
@@ -194,20 +196,6 @@ export default function TierMakerClient() {
     }));
   };
 
-  // 全キャラクターのビルド設定を開く
-  const handleOpenBuildDefine = () => {
-    // 配置されているキャラクターの一覧を取得
-    const placedCharacters = tiers.flatMap(tier => tier.characters);
-    if (placedCharacters.length === 0) {
-      alert('キャラクターをティアに配置してからビルドを定義してください。');
-      return;
-    }
-    
-    // 最初のキャラクターを選択してモーダルを開く
-    setSelectedCharacterForBuild(placedCharacters[0]);
-    setBuildModalOpen(true);
-  };
-
   // 新しいTier行を追加
   const handleAddTier = () => {
     const newId = `tier_${Date.now()}`;
@@ -292,6 +280,71 @@ export default function TierMakerClient() {
     };
   }, []);
 
+  // 画像として保存（代替方法付き）
+  const handleSaveAsImage = async () => {
+    const tierElement = document.getElementById('tier-list-area');
+    if (!tierElement) {
+      alert('Tier表が見つかりません。');
+      return;
+    }
+
+    // 現代ブラウザでのスクリーンショットAPI使用を試行
+    if ('getDisplayMedia' in navigator.mediaDevices) {
+      const useScreenCapture = confirm('画像保存方法を選択してください：\n\n「OK」: 画面キャプチャ（推奨・確実）\n「キャンセル」: 自動保存（html2canvas）');
+      
+      if (useScreenCapture) {
+        alert('これから画面共有が開始されます。\n\n1. 「画面全体」または「ブラウザタブ」を選択\n2. Tier表が見えるようにして数秒待つ\n3. 手動でスクリーンショットを撮影してください\n\nWindows: Win+Shift+S\nMac: Cmd+Shift+4');
+        
+        try {
+          await navigator.mediaDevices.getDisplayMedia({ video: true });
+        } catch (error) {
+          console.log('ユーザーがキャンセルしました');
+        }
+        return;
+      }
+    }
+
+    // 従来のhtml2canvas方式
+    try {
+      // RGB色強制クラスを一時的に追加
+      tierElement.classList.add('tier-capture-area');
+      
+      // スタイル適用を待つ
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // よりシンプルな設定でhtml2canvasを実行
+      const canvas = await html2canvas(tierElement, {
+        useCORS: true,
+        allowTaint: false,
+        scale: 1,
+        logging: false,
+        width: tierElement.offsetWidth,
+        height: tierElement.offsetHeight,
+      } as any);
+
+      // RGB色強制クラスを削除
+      tierElement.classList.remove('tier-capture-area');
+
+      // 画像としてダウンロード
+      const link = document.createElement('a');
+      link.download = `genshin-tier-list-${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert('Tier表を画像として保存しました！');
+    } catch (error) {
+      // クラスが残っている場合は削除
+      tierElement.classList.remove('tier-capture-area');
+      console.error('画像保存エラー:', error);
+      
+      // ユーザーに詳細情報を提供
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert(`自動保存に失敗しました。\n\nエラー詳細: ${errorMessage}\n\n手動での代替手段：\n1. Win+Shift+S (Windows) または Cmd+Shift+4 (Mac)\n2. Tier表の部分を選択して保存\n3. または F12 → Elements → #tier-list-area を右クリック → "Screenshot node"`);
+    }
+  };
+
   return (
     <DndContext 
       sensors={sensors} 
@@ -299,38 +352,58 @@ export default function TierMakerClient() {
       onDragEnd={handleDragEnd}
       collisionDetection={closestCenter}
     >
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
         {/* メインコンテンツエリア */}
-        <div className="pb-48">
+        <div className="pb-44">
           <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold text-center mb-6">
-              原神キャラクター評価ツール
-            </h1>
+            {/* ヘッダーエリア */}
+            <div className="mb-8">
+              <h1 className="text-4xl font-extrabold text-center mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent drop-shadow-lg">
+                原神キャラクター評価ツール
+              </h1>
 
-            {/* コントロールボタン */}
-            <div className="mb-6 flex gap-4 flex-wrap justify-center">
-              <button
-                onClick={handleAddTier}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-              >
-                + Tier行を追加
-              </button>
-              <button
-                onClick={handleReset}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                リセット
-              </button>
-              <button
-                onClick={handleOpenBuildDefine}
-                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-              >
-                🔧 ビルドを定義
-              </button>
+              {/* コントロールボタン - 2+1レイアウト */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-center max-w-4xl mx-auto">
+                {/* 左側: 編集機能 */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleAddTier}
+                    className="group relative px-4 py-2.5 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white rounded-lg hover:from-emerald-400 hover:via-green-400 hover:to-teal-400 transition-all duration-300 font-semibold shadow-xl hover:shadow-emerald-500/50 hover:scale-105 transform active:scale-95 border border-emerald-400/30 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative flex items-center">
+                      <IoAdd className="mr-1.5 group-hover:rotate-90 transition-transform duration-300" size={16} />
+                      Tier追加
+                    </div>
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    className="group relative px-4 py-2.5 bg-gradient-to-r from-red-500 via-pink-500 to-rose-500 text-white rounded-lg hover:from-red-400 hover:via-pink-400 hover:to-rose-400 transition-all duration-300 font-semibold shadow-xl hover:shadow-red-500/50 hover:scale-105 transform active:scale-95 border border-red-400/30 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative flex items-center">
+                      <IoRefresh className="mr-1.5 group-hover:rotate-180 transition-transform duration-300" size={16} />
+                      リセット
+                    </div>
+                  </button>
+                </div>
+
+                {/* 右側: 保存機能 */}
+                <button
+                  onClick={handleSaveAsImage}
+                  className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white rounded-lg hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400 transition-all duration-300 font-semibold shadow-xl hover:shadow-blue-500/50 hover:scale-105 transform active:scale-95 border border-blue-400/30 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center">
+                    <IoCamera className="mr-1.5 group-hover:scale-110 transition-transform duration-300" size={16} />
+                    画像保存
+                  </div>
+                </button>
+              </div>
             </div>
             
             {/* Tierエリア */}
-            <div className="space-y-4 overflow-visible">
+            <div id="tier-list-area" className="space-y-4 overflow-visible bg-gray-100">
               {tiers.map((tier) => (
                 <TierRow 
                   key={tier.id} 

@@ -26,12 +26,12 @@ const MenuList = [
 
 export default function Footer() {
     return (
-        <footer className="h-footer bg-bar px-6 border-t border-neutral-300 shadow-lg fixed bottom-0 left-0 right-0">
-            <ul className="flex items-center justify-between">
+        <footer className="h-[2.5rem] bg-bar px-4 border-t border-neutral-300 shadow-lg fixed bottom-0 left-0 right-0 z-40">
+            <ul className="flex items-center justify-between h-full">
                 {MenuList.map((menu) => (
-                    <Link key={menu.name} href={menu.href} className="text-bar-text text-center mt-2 flex flex-col hover:opacity-70 transition-opacity">
-                      <li className="text-4xl">{menu.icon}</li>
-                      <p className="text-xs">{menu.name}</p>
+                    <Link key={menu.name} href={menu.href} className="text-bar-text text-center flex flex-col justify-center hover:opacity-70 transition-opacity py-1">
+                      <li className="text-lg">{menu.icon}</li>
+                      <p className="text-[10px] leading-none">{menu.name}</p>
                     </Link>
                 ))}
             </ul>

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #e4dcdc;
+  --background: #ffffff;
   --foreground: #171717;
 }
 
@@ -11,9 +11,9 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-logo: var(--font-logo);
-  --spacing-footer: 4rem;
+  --spacing-footer: 2.5rem;
   --color-bar:#171717;
-  --color-bar-text:#a16207
+  --color-bar-text:#a16207;
 
 
 }
@@ -29,4 +29,97 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OKLCH色問題対策：html2canvas用にRGB色を強制使用 */
+.tier-capture-area {
+  --tw-bg-opacity: 1;
+}
+
+.tier-capture-area .bg-red-500 {
+  background-color: rgb(239 68 68) !important;
+}
+
+.tier-capture-area .bg-orange-500 {
+  background-color: rgb(249 115 22) !important;
+}
+
+.tier-capture-area .bg-yellow-500 {
+  background-color: rgb(234 179 8) !important;
+}
+
+.tier-capture-area .bg-green-500 {
+  background-color: rgb(34 197 94) !important;
+}
+
+.tier-capture-area .bg-blue-500 {
+  background-color: rgb(59 130 246) !important;
+}
+
+.tier-capture-area .bg-purple-500 {
+  background-color: rgb(168 85 247) !important;
+}
+
+.tier-capture-area .bg-pink-500 {
+  background-color: rgb(236 72 153) !important;
+}
+
+.tier-capture-area .bg-indigo-500 {
+  background-color: rgb(99 102 241) !important;
+}
+
+.tier-capture-area .bg-teal-500 {
+  background-color: rgb(20 184 166) !important;
+}
+
+.tier-capture-area .bg-cyan-500 {
+  background-color: rgb(6 182 212) !important;
+}
+
+.tier-capture-area .bg-lime-500 {
+  background-color: rgb(132 204 22) !important;
+}
+
+.tier-capture-area .bg-emerald-500 {
+  background-color: rgb(16 185 129) !important;
+}
+
+.tier-capture-area .bg-rose-500 {
+  background-color: rgb(244 63 94) !important;
+}
+
+.tier-capture-area .bg-violet-500 {
+  background-color: rgb(139 92 246) !important;
+}
+
+.tier-capture-area .bg-amber-500 {
+  background-color: rgb(245 158 11) !important;
+}
+
+.tier-capture-area .bg-gray-100 {
+  background-color: rgb(243 244 246) !important;
+}
+
+.tier-capture-area .bg-gray-50 {
+  background-color: rgb(249 250 251) !important;
+}
+
+.tier-capture-area .bg-white {
+  background-color: rgb(255 255 255) !important;
+}
+
+.tier-capture-area .border-gray-300 {
+  border-color: rgb(209 213 219) !important;
+}
+
+.tier-capture-area .border-blue-400 {
+  border-color: rgb(96 165 250) !important;
+}
+
+.tier-capture-area .text-white {
+  color: rgb(255 255 255) !important;
 }

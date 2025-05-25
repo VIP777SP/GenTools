@@ -5,7 +5,7 @@ import { artifact } from '@/libs/artifacts';
 // ビルド情報の型定義
 export interface CharacterBuild {
   characterId: number;
-  constellation?: number; // 凸数 (0-6)
+  constellation?: number; // 凸数 (-1: 非表示, 0: C0, 1-6: C1-C6, undefined: 未設定)
   weapon?: weapon;
   artifact?: artifact;
 }
