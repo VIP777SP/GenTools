@@ -86,12 +86,12 @@ export function TierRow({
           <>
             {/* オーバーレイ */}
             <div 
-              className="fixed inset-0 z-40" 
+              className="fixed inset-0 z-[80]" 
               onClick={handleOutsideClick}
             />
             
             {/* 設定パネル - 左側に表示 */}
-            <div className="absolute top-1 left-full ml-2 z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
+            <div className="absolute top-1 left-full ml-2 z-[85] bg-white border border-gray-300 rounded-lg shadow-lg p-4 min-w-[280px]">
               <h4 className="text-gray-800 font-bold mb-3 text-sm">Tier設定</h4>
               
               {/* ラベル編集 */}
