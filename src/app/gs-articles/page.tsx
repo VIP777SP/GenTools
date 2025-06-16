@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 interface Article {
   id: string;
@@ -102,7 +102,7 @@ function CategoryNavigation({
   const buttonRefs = useRef<{ [key in Category]?: HTMLButtonElement }>({});
 
   // 下線の位置とサイズを更新する関数
-  const updateUnderline = () => {
+  const updateUnderline = useCallback(() => {
     const activeButton = buttonRefs.current[activeCategory];
     const underline = underlineRef.current;
     
@@ -111,7 +111,7 @@ function CategoryNavigation({
       underline.style.left = `${offsetLeft}px`;
       underline.style.width = `${offsetWidth}px`;
     }
-  };
+  }, [activeCategory]);
 
   // アクティブカテゴリが変更されたときに下線を更新
   useEffect(() => {

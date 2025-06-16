@@ -297,7 +297,7 @@ export default function TierMakerClient() {
         
         try {
           await navigator.mediaDevices.getDisplayMedia({ video: true });
-        } catch (error) {
+        } catch (captureError) {
           console.log('ユーザーがキャンセルしました');
         }
         return;
@@ -409,7 +409,6 @@ export default function TierMakerClient() {
                   tier={tier}
                   characters={tier.characters}
                   characterBuilds={characterBuilds}
-                  onDrop={handleCharacterDrop}
                   onLabelChange={handleLabelChange}
                   onColorChange={handleColorChange}
                   onDelete={handleDeleteTier}

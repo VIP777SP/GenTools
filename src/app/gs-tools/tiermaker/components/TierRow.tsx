@@ -9,7 +9,6 @@ export function TierRow({
   tier, 
   characters, 
   characterBuilds,
-  onDrop,
   onLabelChange,
   onColorChange,
   onDelete,
@@ -20,7 +19,6 @@ export function TierRow({
   tier: TierDefinition; 
   characters: character[];
   characterBuilds: Record<number, CharacterBuild>;
-  onDrop: (tierId: string, characterId: number) => void;
   onLabelChange: (tierId: string, newLabel: string) => void;
   onColorChange: (tierId: string, newColor: string) => void;
   onDelete: (tierId: string) => void;
