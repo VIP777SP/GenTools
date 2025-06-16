@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 
 interface Article {
   id: string;
@@ -117,12 +116,12 @@ function CategoryNavigation({
   // アクティブカテゴリが変更されたときに下線を更新
   useEffect(() => {
     updateUnderline();
-  }, [activeCategory]);
+  }, [activeCategory, updateUnderline]);
 
   // 初回レンダリング後に下線を初期化
   useEffect(() => {
     setTimeout(updateUnderline, 0);
-  }, []);
+  }, [updateUnderline]);
 
   return (
     <div className="relative mb-6">

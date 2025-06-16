@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { FaXmark } from 'react-icons/fa6';
 
 interface SidebarProps {
@@ -29,24 +30,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav>
           <ul className="space-y-4">
             <li>
-              <a href="/" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
+              <Link href="/" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
                 ホーム
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/gs-articles" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
+              <Link href="/gs-articles" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
                 記事
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/gs-tools" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
+              <Link href="/gs-tools" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
                 ツール集
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/gs-links" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
+              <Link href="/gs-links" className="block py-2 px-4 hover:bg-gray-100 rounded transition-colors">
                 リンク集
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

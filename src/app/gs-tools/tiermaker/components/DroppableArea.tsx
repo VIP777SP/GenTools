@@ -9,14 +9,12 @@ export function DroppableArea({
   tierId,
   characters,
   characterBuilds,
-  onDrop,
   onBuildConfig,
   onCopy
 }: {
   tierId: string;
   characters: character[];
   characterBuilds: Record<number, CharacterBuild>;
-  onDrop: (tierId: string, characterId: number) => void;
   onBuildConfig: (character: character) => void;
   onCopy: (tierId: string, character: character) => void;
 }) {

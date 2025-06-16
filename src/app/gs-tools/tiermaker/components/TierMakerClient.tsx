@@ -316,11 +316,10 @@ export default function TierMakerClient() {
       const canvas = await html2canvas(tierElement, {
         useCORS: true,
         allowTaint: false,
-        scale: 1,
         logging: false,
         width: tierElement.offsetWidth,
         height: tierElement.offsetHeight,
-      } as any);
+      });
 
       // RGB色強制クラスを削除
       tierElement.classList.remove('tier-capture-area');
@@ -334,13 +333,13 @@ export default function TierMakerClient() {
       document.body.removeChild(link);
       
       alert('Tier表を画像として保存しました！');
-    } catch (error) {
+    } catch (saveError) {
       // クラスが残っている場合は削除
       tierElement.classList.remove('tier-capture-area');
-      console.error('画像保存エラー:', error);
+      console.error('画像保存エラー:', saveError);
       
       // ユーザーに詳細情報を提供
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = saveError instanceof Error ? saveError.message : String(saveError);
       alert(`自動保存に失敗しました。\n\nエラー詳細: ${errorMessage}\n\n手動での代替手段：\n1. Win+Shift+S (Windows) または Cmd+Shift+4 (Mac)\n2. Tier表の部分を選択して保存\n3. または F12 → Elements → #tier-list-area を右クリック → "Screenshot node"`);
     }
   };

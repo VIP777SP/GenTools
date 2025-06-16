@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { character } from '@/libs/charlist';
-import { TierDefinition, TIER_COLORS, getLighterBgColor, getLabelTextSize, CharacterBuild } from '../types';
+import { TierDefinition, TIER_COLORS, getLighterBgColor, CharacterBuild } from '../types';
 import { DroppableArea } from './DroppableArea';
 import { HiDotsVertical } from 'react-icons/hi';
 
@@ -160,7 +160,6 @@ export function TierRow({
         tierId={tier.id}
         characters={characters}
         characterBuilds={characterBuilds}
-        onDrop={onDrop}
         onBuildConfig={onBuildConfig}
         onCopy={onCopy}
       />

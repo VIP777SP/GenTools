@@ -36,7 +36,7 @@ export const artifactlist: artifact[] = [
     { id: 27, name: '水仙の夢', iconUrl: '/images/artifacts/nymph-dream-icon.png', rarity: 5 },
     { id: 28, name: '花海甘露の光', iconUrl: '/images/artifacts/vourukasha-glow-icon.png', rarity: 5 },
     { id: 29, name: '黄金の劇団', iconUrl: '/images/artifacts/golden-troupe-icon.png', rarity: 5 },
-    { id: 30, name: 'マレショーセーハンター', iconUrl: '/images/artifacts/marechaussee-hunter-icon.png', rarity: 5 },
+    { id: 30, name: 'ファントムハンター', iconUrl: '/images/artifacts/marechaussee-hunter-icon.png', rarity: 5 },
     { id: 31, name: '昔日の宗室の儀', iconUrl: '/images/artifacts/nighttime-whispers-icon.png', rarity: 5 },
     { id: 32, name: '過ぎ去りし日の歌', iconUrl: '/images/artifacts/song-days-past-icon.png', rarity: 5 },
     { id: 33, name: '調和の奇想', iconUrl: '/images/artifacts/fragment-harmonic-whimsy-icon.png', rarity: 5 },
