@@ -297,7 +297,7 @@ export default function TierMakerClient() {
         
         try {
           await navigator.mediaDevices.getDisplayMedia({ video: true });
-        } catch (captureError) {
+        } catch (_captureError) {
           console.log('ユーザーがキャンセルしました');
         }
         return;
